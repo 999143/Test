@@ -1,0 +1,82 @@
+import asyncio
+from telethon import TelegramClient
+
+# =========================
+# TELEGRAM API CREDENTIALS
+# =========================
+
+API_ID = 36066563
+API_HASH = "b5db278558bba821bfd1398ae69cda7c"
+
+# =========================
+# SETTINGS
+# =========================
+
+INTERVAL = 1800  # 30 minutes
+
+# =========================
+# GROUP SETTINGS
+# =========================
+
+GROUPS = [
+    {
+        "name": "Group 1",
+        "chat": "https://t.me/ofmlustify",
+        "message": "scam agency, don't work for them!!! if you like your mental health, they won't pay you!!",
+        "image": None,  # Example: "/home/ubuntu/image1.jpg"
+    },
+
+    {
+        "name": "Group 2",
+        "chat": "https://t.me/hireoftalents",
+        "message": "scam agency, don't work for them!!! if you like your mental health, they won't pay you!!",
+        "image": None,  # Example: "/home/ubuntu/image2.jpg"
+    },
+
+    {
+        "name": "Group 3",
+        "chat": "GROUP_3_USERNAME",
+        "message": "Your message for group 3",
+        "image": None,  # Example: "/home/ubuntu/image3.jpg"
+    },
+]
+
+client = TelegramClient("telegram_poster", API_ID, API_HASH)
+
+
+async def send_post(group):
+    try:
+        if group["image"]:
+            await client.send_file(
+                group["chat"],
+                group["image"],
+                caption=group["message"]
+            )
+        else:
+            await client.send_message(
+                group["chat"],
+                group["message"]
+            )
+
+        print(f"✓ Posted to {group['name']}")
+
+    except Exception as e:
+        print(f"✗ Error posting to {group['name']}: {e}")
+
+
+async def main():
+    await client.start()
+
+    print("Telegram poster started.")
+
+    while True:
+
+        for group in GROUPS:
+            await send_post(group)
+
+        print(f"Waiting {INTERVAL} seconds...")
+        await asyncio.sleep(INTERVAL)
+
+
+with client:
+    client.loop.run_until_complete(main())
